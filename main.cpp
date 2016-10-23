@@ -1,42 +1,23 @@
 #include <iostream>
 #include <cstdint>
 
+#include "arppacket.h"
 
-/**
-    ARP header:
-        hardware 2 bytes
-        protocol 2 bytes
-        hardware length 1 byte
-        protocol length 1 byte
-
-        operation code 2 bytes
-
-        source hardware address 6 bytes
-        source protocol address 4 bytes
-        target hardware address 6 bytes
-        target protocol address 4 bytes
-**/
-
-struct ARPHeader
-{
-    uint16_t hardware = 0x0001;
-    uint16_t protocol = 0x0800;
-    uint8_t hardwareLength = 6;
-    uint8_t protocolLength = 4;
-
-    uint16_t operationCode = 1;
-
-    uint8_t sourceHardwareAddress[6];
-    uint8_t sourceProtocolAddress[4];
-    uint8_t targetHardwareAddress[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; // broadcast response, so MAC is FF:FF:FF:FF:FF:FF
-    uint8_t targetProtocolAddress[4];
+struct EthernetPacket{
+    uint8_t destinationMAC[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+    uint8_t sourceMAC[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t arpPacket[28] = {0};
 };
-
 
 int main(int argc, char* argv[])
 {
-    ARPHeader arp;
+    ARPPacket arp;
+    EthernetPacket eth;
+
+    uint8_t qwe[] = {1,23,4,5,6,7};
+    arp.setTargetHwAddr(qwe);
 
     std::cout << sizeof(arp) << std::endl;
+    std::cout << sizeof(eth) << std::endl;
     return 0;
 }
