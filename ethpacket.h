@@ -1,4 +1,8 @@
+#ifndef HG_ETHPACKET_H
+#define HG_ETHPACKET_H
+
 #include <cstdint>
+#include <string>
 
 /**
     ARP header:
@@ -20,12 +24,35 @@ struct ARPPacket{
     uint8_t hardwareLength = 6;
     uint8_t protocolLength = 4;
 
-    uint16_t operationCode = 1;
+    uint16_t operationCode = 1; //response
 
     uint8_t sourceHardwareAddress[6]; // random?
     uint8_t sourceProtocolAddress[4]; // random?
-    uint8_t targetHardwareAddress[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; // broadcast response, so MAC is FF:FF:FF:FF:FF:FF
+    uint8_t targetHardwareAddress[6];
     uint8_t targetProtocolAddress[4];
-
-    void setTargetHwAddr(const uint8_t * hwaddr);
 };
+
+/**
+    Ethernet frame:
+        destination MAC 6 bytes
+        source MAC 6 bytes
+
+        everything
+**/
+class EthernetPacket{
+public:
+    uint8_t destinationMAC[6];
+    uint8_t sourceMAC[6];
+
+    ARPPacket arp;
+
+    void setSourceMAC(const uint8_t * sourcemac);
+    void setDestinationMAC(const uint8_t * destmac);
+
+    void setSourceIP(const uint8_t * srcip);
+    void setTargetIP(const uint8_t * trgip);
+
+    std::string toString() const;
+};
+
+#endif
