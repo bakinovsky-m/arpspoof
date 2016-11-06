@@ -41,16 +41,16 @@ struct ARPPacket{
 **/
 class EthernetPacket{
 public:
-    uint8_t destinationMAC[6];
     uint8_t sourceMAC[6];
+    uint8_t targetMAC[6];
 
     ARPPacket arp;
 
     void setSourceMAC(const uint8_t * sourcemac);
-    void setDestinationMAC(const uint8_t * destmac);
+    void setTargetMAC(const uint8_t * destmac);
 
-    void setSourceIP(const uint8_t * srcip);
-    void setTargetIP(const uint8_t * trgip);
+    void setSourceIP(const uint8_t * srcIP);
+    void setTargetIP(const uint8_t * trgIP);
 
     std::string toString() const;
 };
