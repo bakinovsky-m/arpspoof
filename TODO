@@ -1,0 +1,9 @@
+iterators?
+
+ostream, << override instead of toString
+
+threads(!)
+
+need to separate library and main program
+
+checks everywhere!
