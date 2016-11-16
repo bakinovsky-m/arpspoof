@@ -1,17 +1,27 @@
 #include <iostream>
 #include <cstdint>
-
-// #include "arppacket.h"
+// #include <boost/program_options.hpp>
 #include "ethpacket.h"
 
 int main(int argc, char* argv[])
 {
+    if(argc == 1){
+        std::cout << "Help: ./arpspoof sourceMAC targetMAC sourceIP targetIP" << std::endl;
+        // return 0;
+    }
+
     EthernetPacket eth;
 
-    uint8_t destmac[] = {0xFF,23,4,5,6,7};
-    uint8_t srcmac[] = {1,2, 3,4,5,6,7};
-    eth.setTargetMAC(destmac);
-    eth.setSourceMAC(srcmac);
+    uint8_t srcMAC[] = {1,2, 3,4,5,6,7};
+    uint8_t trgMAC[] = {0xFF,23,4,5,6,7};
+    uint8_t srcIP[] = {192, 168, 1, 2};
+    uint8_t trgIP[] = {192, 168, 1, 1};
+    eth.setSourceMAC(srcMAC);
+    eth.setTargetMAC(trgMAC);
+    eth.setSourceIP(srcIP);
+    eth.setTargetIP(trgIP);
+
+    // sendPacket();
 
     std::cout << eth.toString() << std::endl;
     return 0;

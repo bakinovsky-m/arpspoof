@@ -1,3 +1,5 @@
+parse input
+
 iterators?
 
 ostream, << override instead of toString
