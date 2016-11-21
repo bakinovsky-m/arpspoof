@@ -1,4 +1,4 @@
-#include "ethpacket.h"
+#include "arppacket.h"
 
 // void EthernetPacket::sendPacket(){
     

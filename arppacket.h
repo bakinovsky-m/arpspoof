@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <string>
-#include <arpa/inet.h>
+// #include <arpa/inet.h>
 
 /**
     ARP header:
@@ -19,11 +19,12 @@
         target hardware address 6 bytes
         target protocol address 4 bytes
 **/
+#define ETHER_TYPE_FOR_ARP 0x0806
+#define HW_TYPE_FOR_ETHER 0x0001
 struct ARPPacket{
     ARPPacket() = default;
-    uint16_t hardware = 0x0001;
-    // unsigned int hardware = 0x0001;
-    uint16_t protocol = 0x0800;
+    uint16_t hardware = HW_TYPE_FOR_ETHER;
+    uint16_t protocol = ETHER_TYPE_FOR_ARP;
     uint8_t hardwareLength = 6;
     uint8_t protocolLength = 4;
 
