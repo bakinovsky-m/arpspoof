@@ -1,9 +1,10 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-#include <cstdint>
 #include <string>
-// #include <arpa/inet.h>
+#include <sstream>
+#include <iostream>
+
 
 /**
     ARP header:
@@ -23,17 +24,17 @@
 #define HW_TYPE_FOR_ETHER 0x0001
 struct ARPPacket{
     ARPPacket() = default;
-    uint16_t hardware = HW_TYPE_FOR_ETHER;
-    uint16_t protocol = ETHER_TYPE_FOR_ARP;
-    uint8_t hardwareLength = 6;
-    uint8_t protocolLength = 4;
+    unsigned short int hardware = HW_TYPE_FOR_ETHER;
+    unsigned short int protocol = ETHER_TYPE_FOR_ARP;
+    unsigned char hardwareLength = 6;
+    unsigned char protocolLength = 4;
 
-    uint16_t operationCode = 1; //response
+    unsigned short int operationCode = 1; //response
 
-    uint8_t sourceHardwareAddress[6]{0}; // random?
-    uint8_t sourceProtocolAddress[4]{0}; // random?
-    uint8_t targetHardwareAddress[6]{0};
-    uint8_t targetProtocolAddress[4]{0};
+    unsigned char sourceHardwareAddress[6]{0};
+    unsigned char sourceProtocolAddress[4]{0};
+    unsigned char targetHardwareAddress[6]{0};
+    unsigned char targetProtocolAddress[4]{0};
 };
 
 /**
@@ -46,17 +47,19 @@ struct ARPPacket{
 class EthernetPacket{
 public:
     EthernetPacket() = default;
-    uint8_t sourceMAC[6]{0};
-    uint8_t targetMAC[6]{0};
+    unsigned char sourceMAC[6]{0};
+    unsigned char targetMAC[6]{0};
 
     ARPPacket arp;
 
 
-    void setSourceMAC(const uint8_t * sourcemac);
-    void setTargetMAC(const uint8_t * targetmac);
+    void setSourceMAC(const unsigned char * sourcemac);
+    void setTargetMAC(const unsigned char * targetmac);
 
-    void setSourceIP(const uint8_t * srcIP);
-    void setTargetIP(const uint8_t * trgIP);
+    void setSourceIP(const unsigned char * srcIP);
+    void setTargetIP(const unsigned char * trgIP);
+
+    unsigned char * parseIP(char * str);
 
     std::string toString() const;
 };

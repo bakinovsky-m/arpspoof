@@ -1,6 +1,4 @@
 #include <iostream>
-#include <cstdint>
-// #include <boost/program_options.hpp>
 #include "arppacket.h"
 
 int main(int argc, char* argv[])
@@ -11,6 +9,9 @@ int main(int argc, char* argv[])
     }
 
     EthernetPacket eth;
+    std::cout << sizeof(eth) <<  std::endl;
+
+    eth.parseIP(argv[1]);
 
     uint8_t srcMAC[] = {1,2, 3,4,5,6,7};
     uint8_t trgMAC[] = {0xFF,23,4,5,6,7};
