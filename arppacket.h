@@ -4,6 +4,14 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <cstring>
+
+#include <unistd.h>
+#include <sys/socket.h>
+#include <linux/if_packet.h>
+#include <net/ethernet.h> /* the L2 protocols */
+#include <arpa/inet.h>
+#include <net/if.h>
 
 
 /**
@@ -20,8 +28,8 @@
         target hardware address 6 bytes
         target protocol address 4 bytes
 **/
-#define ETHER_TYPE_FOR_ARP 0x0806
 #define HW_TYPE_FOR_ETHER 0x0001
+#define ETHER_TYPE_FOR_ARP 0x0806
 struct ARPPacket{
     ARPPacket() = default;
     unsigned short int hardware = HW_TYPE_FOR_ETHER;
@@ -47,23 +55,25 @@ struct ARPPacket{
 class EthernetPacket{
 public:
     EthernetPacket() = default;
+
+    // unsigned char preamble[8]{0};
     unsigned char sourceMAC[6]{0};
     unsigned char targetMAC[6]{0};
-
     ARPPacket arp;
 
 
-    void setSourceMAC(const unsigned char * sourcemac);
-    void setTargetMAC(const unsigned char * targetmac);
+    void setSMAC(const char * sourcemac);
+    void setTMAC(const char * targetmac);
 
-    void setSourceIP(const unsigned char * srcIP);
-    void setTargetIP(const unsigned char * trgIP);
+    void setSIP(const char * srcIP);
+    void setTIP(const char * trgIP);
 
-    unsigned char * parseIP(char * str);
+    unsigned char * parseIP(const char * str);
+    unsigned char * parseMAC(const char * str);
 
     std::string toString() const;
 };
 
-// void sendPacket();
+void sendPacket(const EthernetPacket * eth);
 
 #endif

@@ -10,20 +10,28 @@ int main(int argc, char* argv[])
 
     EthernetPacket eth;
     std::cout << sizeof(eth) <<  std::endl;
+    std::cout << sizeof(eth.arp) <<  std::endl;
 
-    eth.parseIP(argv[1]);
-
-    uint8_t srcMAC[] = {1,2, 3,4,5,6,7};
-    uint8_t trgMAC[] = {0xFF,23,4,5,6,7};
-    uint8_t srcIP[] = {192, 168, 1, 2};
-    uint8_t trgIP[] = {192, 168, 1, 1};
-    eth.setSourceMAC(srcMAC);
-    eth.setTargetMAC(trgMAC);
-    eth.setSourceIP(srcIP);
-    eth.setTargetIP(trgIP);
-
-    // sendPacket();
-
+    if(argc >= 5){
+        eth.setSIP(argv[1]);
+        eth.setTIP(argv[2]);
+        eth.setSMAC(argv[3]);
+        eth.setTMAC(argv[4]);
+    } else {
+        char srcMAC[] = {1,2,3,4,5,6,7};
+        char trgMAC[] = {0xff,0xff,0xff,0xff,0xff,0xff};
+        char srcIP[] = {192, 168, 1, 2};
+        char trgIP[] = {192, 168, 1, 1};
+        eth.setSMAC(srcMAC);
+        eth.setTMAC(trgMAC);
+        eth.setSIP(srcIP);
+        eth.setTIP(trgIP);
+    }
     std::cout << eth.toString() << std::endl;
+
+
+    EthernetPacket * e = &eth;
+    sendPacket(e);
+
     return 0;
 }
