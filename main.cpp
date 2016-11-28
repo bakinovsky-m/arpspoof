@@ -22,10 +22,10 @@ int main(int argc, char* argv[])
         char trgMAC[] = {0xff,0xff,0xff,0xff,0xff,0xff};
         char srcIP[] = {192, 168, 1, 2};
         char trgIP[] = {192, 168, 1, 1};
-        eth.setSMAC(srcMAC);
-        eth.setTMAC(trgMAC);
         eth.setSIP(srcIP);
         eth.setTIP(trgIP);
+        eth.setSMAC(srcMAC);
+        eth.setTMAC(trgMAC);
     }
     std::cout << eth.toString() << std::endl;
 

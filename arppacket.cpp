@@ -6,6 +6,7 @@ void EthernetPacket::setSMAC(const char * srcMAC){
         sourceMAC[it] = srcmac[it];
         arp.sourceHardwareAddress[it] = srcmac[it];
     }
+    delete srcmac;
 }
 
 void EthernetPacket::setTMAC(const char * trgMAC){
@@ -14,6 +15,7 @@ void EthernetPacket::setTMAC(const char * trgMAC){
         targetMAC[it] = trgmac[it];
         arp.targetHardwareAddress[it] = trgmac[it];
     }
+    delete trgmac;
 }
 
 void EthernetPacket::setSIP(const char * srcIP){
@@ -21,6 +23,7 @@ void EthernetPacket::setSIP(const char * srcIP){
     for (std::ptrdiff_t it = 0; it < arp.protocolLength; it += 1){
         arp.sourceProtocolAddress[it] = srcip[it];
     }   
+    delete srcip;
 }
 
 void EthernetPacket::setTIP(const char * trgIP){
@@ -28,12 +31,13 @@ void EthernetPacket::setTIP(const char * trgIP){
     for (std::ptrdiff_t it = 0; it < arp.protocolLength; it += 1){
         arp.targetProtocolAddress[it] = trgip[it];
     }   
+    delete trgip;
 }
 
 unsigned char * EthernetPacket::parseIP(const char * str){
     int b[4]{0};
     char dot;
-    unsigned char res[4]{0};
+    unsigned char * res = new unsigned char[4]{0};
     std::istringstream s(str);
 
     s >> b[0] >> dot >> b[1] >> dot >> b[2] >> dot >> b[3];
@@ -46,7 +50,7 @@ unsigned char * EthernetPacket::parseIP(const char * str){
 unsigned char * EthernetPacket::parseMAC(const char * str){
     int b[6]{0};
     char dot;
-    unsigned char res[6]{0};
+    unsigned char * res = new unsigned char[6]{0};
     std::istringstream s(str);
 
     s >> b[0] >> dot >> b[1] >> dot >> b[2] >> dot >> b[3];
