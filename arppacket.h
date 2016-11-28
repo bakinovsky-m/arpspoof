@@ -9,7 +9,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <linux/if_packet.h>
-#include <net/ethernet.h> /* the L2 protocols */
+// #include <net/ethernet.h> /* the L2 protocols */
+#include <linux/if_ether.h> /* the L2 protocols */
 #include <arpa/inet.h>
 #include <net/if.h>
 
@@ -29,15 +30,17 @@
         target protocol address 4 bytes
 **/
 #define HW_TYPE_FOR_ETHER 0x0001
-#define ETHER_TYPE_FOR_ARP 0x0806
+// #define HW_TYPE_FOR_ETHER 0x0100
+#define ETHER_TYPE_FOR_ARP 0x0800
+// #define ETHER_TYPE_FOR_ARP 0x0608
 struct ARPPacket{
     ARPPacket() = default;
-    unsigned short int hardware = HW_TYPE_FOR_ETHER;
-    unsigned short int protocol = ETHER_TYPE_FOR_ARP;
+    unsigned short int hardware = htons(HW_TYPE_FOR_ETHER);
+    unsigned short int protocol = htons(ETHER_TYPE_FOR_ARP);
     unsigned char hardwareLength = 6;
     unsigned char protocolLength = 4;
 
-    unsigned short int operationCode = 1; //response
+    unsigned short int operationCode = htons(2); //response
 
     unsigned char sourceHardwareAddress[6]{0};
     unsigned char sourceProtocolAddress[4]{0};
@@ -57,8 +60,9 @@ public:
     EthernetPacket() = default;
 
     // unsigned char preamble[8]{0};
-    unsigned char sourceMAC[6]{0};
     unsigned char targetMAC[6]{0};
+    unsigned char sourceMAC[6]{0};
+    unsigned char type[2] = {0x08, 0x06};
     ARPPacket arp;
 
 
@@ -74,6 +78,6 @@ public:
     std::string toString() const;
 };
 
-void sendPacket(const EthernetPacket * eth);
+void sendPacket(const EthernetPacket * eth, const char * interface);
 
 #endif

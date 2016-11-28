@@ -1,10 +1,6 @@
-parse input
-
-iterators?
+output for MACs from dec to hex 
 
 ostream, << override instead of toString
-
-threads(!)
 
 need to separate library and main program
 

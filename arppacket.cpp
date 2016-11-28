@@ -6,7 +6,7 @@ void EthernetPacket::setSMAC(const char * srcMAC){
         sourceMAC[it] = srcmac[it];
         arp.sourceHardwareAddress[it] = srcmac[it];
     }
-    delete srcmac;
+    delete[] srcmac;
 }
 
 void EthernetPacket::setTMAC(const char * trgMAC){
@@ -15,7 +15,7 @@ void EthernetPacket::setTMAC(const char * trgMAC){
         targetMAC[it] = trgmac[it];
         arp.targetHardwareAddress[it] = trgmac[it];
     }
-    delete trgmac;
+    delete[] trgmac;
 }
 
 void EthernetPacket::setSIP(const char * srcIP){
@@ -23,7 +23,7 @@ void EthernetPacket::setSIP(const char * srcIP){
     for (std::ptrdiff_t it = 0; it < arp.protocolLength; it += 1){
         arp.sourceProtocolAddress[it] = srcip[it];
     }   
-    delete srcip;
+    delete[] srcip;
 }
 
 void EthernetPacket::setTIP(const char * trgIP){
@@ -31,7 +31,7 @@ void EthernetPacket::setTIP(const char * trgIP){
     for (std::ptrdiff_t it = 0; it < arp.protocolLength; it += 1){
         arp.targetProtocolAddress[it] = trgip[it];
     }   
-    delete trgip;
+    delete[] trgip;
 }
 
 unsigned char * EthernetPacket::parseIP(const char * str){
@@ -49,15 +49,16 @@ unsigned char * EthernetPacket::parseIP(const char * str){
 
 unsigned char * EthernetPacket::parseMAC(const char * str){
     int b[6]{0};
-    char dot;
     unsigned char * res = new unsigned char[6]{0};
-    std::istringstream s(str);
 
-    s >> b[0] >> dot >> b[1] >> dot >> b[2] >> dot >> b[3];
-    s >> dot >> b[4] >> dot >> b[5];
-    for(std::ptrdiff_t i = 0; i < 6; i += 1){
-        res[i] = b[i];
+    if(sscanf(str, "%x:%x:%x:%x:%x:%x", &b[0], &b[1], &b[2],
+        &b[3], &b[4], &b[5]) == 6){
+        for(std::ptrdiff_t i = 0; i < 6; i += 1){
+            res[i] = b[i];
+        }
+        
     }
+
     return res;
 }
 
@@ -94,15 +95,15 @@ std::string EthernetPacket::toString() const{
 }
 
 /* must be root */
-void sendPacket(const EthernetPacket * eth){
+void sendPacket(const EthernetPacket * eth, const char * interface){
     // int s = socket(AF_PACKET, SOCK_DGRAM, 0);
     int s = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
-    std::cout << "socket descriptor: " << s << std::endl;
-    std::cout << strerror(errno) << std::endl;
+    // std::cout << "socket descriptor: " << s << std::endl;
+    // std::cout << strerror(errno) << std::endl;
 
     struct sockaddr_ll socket_address;
     /* Index of the network device */
-    socket_address.sll_ifindex = if_nametoindex("lo");
+    socket_address.sll_ifindex = if_nametoindex(interface);
     /* Address length*/
     socket_address.sll_halen = ETH_ALEN;
     /* Destination MAC */
@@ -113,9 +114,8 @@ void sendPacket(const EthernetPacket * eth){
     socket_address.sll_addr[4] = 0x44;
     socket_address.sll_addr[5] = 0x55;
 
-    // int ss = write(s, (void*)eth, sizeof(eth));
-    // int ss = sendto(s, (void*)eth, sizeof(eth), 0,
-    int ss = sendto(s, (void*)eth, 40, 0,
+    int ss = sendto(s, (void*)eth, sizeof(*eth), 0,
+    // int ss = send(s, (void*)eth, sizeof(*eth), 0);
         (sockaddr*)&socket_address, sizeof(socket_address));
     std::cout << "Send return: " << ss << std::endl;
     std::cout << strerror(errno) << std::endl;

