@@ -7,20 +7,23 @@
 #include <cstring> /* strerro() */
 
 // cross platform?
-#ifdef __WIN32
+#if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
 
-#include "winsock2.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include "custom_for_win.h" /* my custom header with some definitions */
 
 #else
 
-// #include <sys/socket.h> /* why don't i need that header??? */
-#include <unistd.h> /* close() */ 
+#include <sys/socket.h> /* nothing needs this header */
 #include <linux/if_packet.h> /* sockaddr_ll */
 #include <linux/if_ether.h> /* ETH_P_ARP, ETH_ALEN */
 #include <arpa/inet.h> /* htons() */
 #include <net/if.h> /* if_nametoindex() */
 
 #endif
+
+#include <unistd.h> /* sscanf(), close() */
 
 /**
     ARP header:
@@ -37,9 +40,13 @@
         target protocol address 4 bytes
 **/
 #define HW_TYPE_FOR_ETHER 0x0001
-// #define HW_TYPE_FOR_ETHER 0x0100
+/* 
+    ether type must be 0806 for arp, 
+    but i changed it to 0080 for ip
+    because of wireshark view.
+    need to test, maybe 0806 will work too
+ */
 #define ETHER_TYPE_FOR_ARP 0x0800
-// #define ETHER_TYPE_FOR_ARP 0x0608
 struct ARPPacket{
     ARPPacket() = default;
     unsigned short int hardware = htons(HW_TYPE_FOR_ETHER);
@@ -66,7 +73,6 @@ class EthernetPacket{
 public:
     EthernetPacket() = default;
 
-    // unsigned char preamble[8]{0};
     unsigned char targetMAC[6]{0};
     unsigned char sourceMAC[6]{0};
     unsigned char type[2] = {0x08, 0x06};
@@ -81,10 +87,15 @@ public:
 
     unsigned char * parseIP(const char * str);
     unsigned char * parseMAC(const char * str);
+    void copyArray(const char * from, unsigned char * to, int len);
 
-    std::string toString() const;
+    std::ostream& writeTo(std::ostream& os) const;
 };
 
-int sendPacket(const EthernetPacket * eth, const char * interface);
+int sendPacket(const EthernetPacket * eth, const char * intrfc);
+
+inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
+    return eth.writeTo(os);
+}
 
 #endif

@@ -1,4 +1,9 @@
 crossplatform testing!!!
-now it doesn't compile on my win xp virtual machine
+now it compiles in toolchain mode
+but doesn't compiles on xp machine (can't find netioapi.h)
+if compiled in toolchain mode, it doesn't execute on xp machine, says smthng about if_nametoindex()
+so a hate windows. or crossplatform coding.
 
-ostream, << override instead of toString
+output - macs to hex view
+
+need to make parse fucntions similar

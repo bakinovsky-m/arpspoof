@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         eth.setSMAC(srcMAC);
         eth.setTMAC(trgMAC);
     }
-    std::cout << eth.toString() << std::endl;
+    std::cout << eth << std::endl;
 
     EthernetPacket * e = &eth;
     while(1){
