@@ -95,29 +95,34 @@ std::string EthernetPacket::toString() const{
 }
 
 /* must be root */
-void sendPacket(const EthernetPacket * eth, const char * interface){
-    // int s = socket(AF_PACKET, SOCK_DGRAM, 0);
+int sendPacket(const EthernetPacket * eth, const char * interface){
     int s = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
-    // std::cout << "socket descriptor: " << s << std::endl;
-    // std::cout << strerror(errno) << std::endl;
+    if(s < 0){
+        throw "bad file descriptor";
+        return -1;
+    }
 
-    struct sockaddr_ll socket_address;
-    /* Index of the network device */
+    sockaddr_ll socket_address;
+    // address family, AF_PACKET for raw packet
+    socket_address.sll_family = AF_PACKET;
+    // index of the network device
     socket_address.sll_ifindex = if_nametoindex(interface);
-    /* Address length*/
+    // address length
     socket_address.sll_halen = ETH_ALEN;
-    /* Destination MAC */
-    socket_address.sll_addr[0] = 0x00;
-    socket_address.sll_addr[1] = 0x11;
-    socket_address.sll_addr[2] = 0x22;
-    socket_address.sll_addr[3] = 0x33;
-    socket_address.sll_addr[4] = 0x44;
-    socket_address.sll_addr[5] = 0x55;
+    // destination MAC
+    for (size_t i = 0; i < eth->arp.hardwareLength; i += 1){
+        socket_address.sll_addr[i] = eth->arp.targetHardwareAddress[i];
+    }
 
     int ss = sendto(s, (void*)eth, sizeof(*eth), 0,
-    // int ss = send(s, (void*)eth, sizeof(*eth), 0);
+    // sendto(s, (void*)eth, sizeof(*eth), 0,
         (sockaddr*)&socket_address, sizeof(socket_address));
-    std::cout << "Send return: " << ss << std::endl;
-    std::cout << strerror(errno) << std::endl;
+    // std::cout << "Send return: " << ss << std::endl;
+    // std::cout << strerror(errno) << std::endl;
+    if(ss < 0){
+        throw "no data sent";
+        return -1;
+    }
     close(s);
+    return 0;
 }

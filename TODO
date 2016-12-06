@@ -1,7 +1,4 @@
-output for MACs from dec to hex 
+crossplatform testing!!!
+now it doesn't compile on my win xp virtual machine
 
 ostream, << override instead of toString
-
-need to separate library and main program
-
-checks everywhere!

@@ -2,18 +2,25 @@
 #define HG_ETHPACKET_H
 
 #include <string>
-#include <sstream>
-#include <iostream>
-#include <cstring>
+#include <sstream> /* istringstream */
+#include <iostream> /* cout's */
+#include <cstring> /* strerro() */
 
-#include <unistd.h>
-#include <sys/socket.h>
-#include <linux/if_packet.h>
-// #include <net/ethernet.h> /* the L2 protocols */
-#include <linux/if_ether.h> /* the L2 protocols */
-#include <arpa/inet.h>
-#include <net/if.h>
+// cross platform?
+#ifdef __WIN32
 
+#include "winsock2.h"
+
+#else
+
+// #include <sys/socket.h> /* why don't i need that header??? */
+#include <unistd.h> /* close() */ 
+#include <linux/if_packet.h> /* sockaddr_ll */
+#include <linux/if_ether.h> /* ETH_P_ARP, ETH_ALEN */
+#include <arpa/inet.h> /* htons() */
+#include <net/if.h> /* if_nametoindex() */
+
+#endif
 
 /**
     ARP header:
@@ -78,6 +85,6 @@ public:
     std::string toString() const;
 };
 
-void sendPacket(const EthernetPacket * eth, const char * interface);
+int sendPacket(const EthernetPacket * eth, const char * interface);
 
 #endif
