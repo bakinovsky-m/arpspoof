@@ -152,3 +152,7 @@ int sendPacket(const EthernetPacket * eth, const std::string intrfc){
     close(s);
     return 0;
 }
+
+int cSendPacket(){
+    return 0;
+}

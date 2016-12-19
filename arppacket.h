@@ -25,6 +25,18 @@
 
 #include <unistd.h> /* close() */
 
+#ifdef _WINDOWS
+#define LIB_CALL __cdecl
+#else
+#define LIB_CALL
+#endif
+
+#ifdef MY_DLL__EXPORTS
+#define LIB_EXPORT __declspec(dllexport)
+#else
+#define LIB_EXPORT
+#endif
+
 /**
     ARP header:
         hardware 2 bytes
@@ -99,5 +111,13 @@ int sendPacket(const EthernetPacket * eth, const std::string intrfc);
 inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
     return eth.writeTo(os);
 }
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+LIB_EXPORT int LIB_CALL cSendPacket();
+#ifdef __cplusplus
+}
+#endif
 
 #endif
