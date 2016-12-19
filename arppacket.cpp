@@ -1,36 +1,60 @@
 #include "arppacket.h"
 
-void EthernetPacket::setSMAC(const char * srcMAC){
-    copyArray(srcMAC, arp.sourceHardwareAddress, arp.hardwareLength);
-    copyArray(srcMAC, sourceMAC, arp.hardwareLength);
+int  EthernetPacket::setSMAC(const char * srcMAC){
+    size_t res1 = copyArray(srcMAC, arp.sourceHardwareAddress, arp.hardwareLength);
+    size_t res2 = copyArray(srcMAC, sourceMAC, arp.hardwareLength);
+    if(res1 != arp.hardwareLength && res2 != arp.hardwareLength){
+        return -1;
+    }
+    return 0;
 }
 
-void EthernetPacket::setTMAC(const char * trgMAC){
-    copyArray(trgMAC, arp.targetHardwareAddress, arp.hardwareLength);
-    copyArray(trgMAC, targetMAC, arp.hardwareLength);
+int EthernetPacket::setTMAC(const char * trgMAC){
+    size_t res1 = copyArray(trgMAC, arp.targetHardwareAddress, arp.hardwareLength);
+    size_t res2 = copyArray(trgMAC, targetMAC, arp.hardwareLength);
+    if(res1 != arp.hardwareLength && res2 != arp.hardwareLength){
+        return -1;
+    }
+    return 0;
 }
 
-void EthernetPacket::setSIP(const char * srcIP){
-    copyArray(srcIP, arp.sourceProtocolAddress, arp.protocolLength);
+int EthernetPacket::setSIP(const char * srcIP){
+    size_t res = copyArray(srcIP, arp.sourceProtocolAddress, arp.protocolLength);
+    if (res != arp.protocolLength){
+        return -1;
+    }
+    return 0;
 }
 
-void EthernetPacket::setTIP(const char * trgIP){
-    copyArray(trgIP, arp.targetProtocolAddress, arp.protocolLength);
+int EthernetPacket::setTIP(const char * trgIP){
+    size_t res = copyArray(trgIP, arp.targetProtocolAddress, arp.protocolLength);
+    if (res != arp.protocolLength){
+        return -1;
+    }
+    return 0;
 }
 
-void EthernetPacket::copyArray(const char * from, unsigned char * to, int len){
+/* 
+    return: count of copied bytes or -1 in case of wrong length
+*/
+size_t EthernetPacket::copyArray(const char * from, unsigned char * to, int len){
     unsigned char * fr = nullptr;
     if(len == arp.protocolLength){
         fr = parseIP(from);
     } else if(len == arp.hardwareLength){
         fr = parseMAC(from);
     } else {
-        return;
+        return -1;
     }
+
+    size_t it = 0;
     for(std::ptrdiff_t i = 0; i < len; i += 1){
         to[i] = fr[i];
+        it++;
     }
     delete[] fr;
+
+    return it;
 }
 
 unsigned char * EthernetPacket::parseIP(const char * str){
@@ -49,14 +73,11 @@ unsigned char * EthernetPacket::parseIP(const char * str){
 unsigned char * EthernetPacket::parseMAC(const char * str){
     int b[6]{0};
     unsigned char * res = new unsigned char[6]{0};
-
     if(sscanf(str, "%x:%x:%x:%x:%x:%x", &b[0], &b[1], &b[2], &b[3], &b[4], &b[5]) == 6){
         for(std::ptrdiff_t i = 0; i < 6; i += 1){
             res[i] = b[i];
         }
-        
     }
-
     return res;
 }
 
@@ -65,14 +86,14 @@ std::ostream& EthernetPacket::writeTo(std::ostream& os) const {
 
     os << "source mac: ";
     for (std::ptrdiff_t i = 0 ; i < arp.hardwareLength; i++){
-        os << std::to_string(sourceMAC[i]);
+        os << std::hex << static_cast<int>(sourceMAC[i]);
         os << ":";
     }
     os << "\b \n";
 
     os << "target mac: ";
     for (std::ptrdiff_t i = 0; i < arp.hardwareLength; i++){
-        os << std::to_string(targetMAC[i]);
+        os << std::hex << static_cast<int>(targetMAC[i]);
         os << ":";
     }
     os << "\b \n";
@@ -114,6 +135,7 @@ int sendPacket(const EthernetPacket * eth, const char * intrfc){
         socket_address.sll_addr[i] = eth->arp.targetHardwareAddress[i];
     }
 
+
     /*  
         second arg of sendto casts to char* because of windows needs
         linux don't give a fuck, as i see
@@ -121,8 +143,6 @@ int sendPacket(const EthernetPacket * eth, const char * intrfc){
         magic
     */
     int ss = sendto(s, (char*)eth, sizeof(*eth), 0, (sockaddr*)&socket_address, sizeof(socket_address));
-    std::cout << "Send return: " << ss << std::endl;
-    std::cout << strerror(errno) << std::endl;
     if(ss < 0){
         throw "no data sent";
         return -1;

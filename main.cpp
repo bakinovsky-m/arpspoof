@@ -30,7 +30,12 @@ int main(int argc, char* argv[])
 
     EthernetPacket * e = &eth;
     while(1){
-        sendPacket(e, argv[5]);
+        if(argc != 6){
+            char * ifname = "lo\0";
+            sendPacket(e, ifname);
+        } else {
+            sendPacket(e, argv[5]);
+        }
         // std::cout << "reply sent" << std::endl;
         usleep(5*1000000);
     }

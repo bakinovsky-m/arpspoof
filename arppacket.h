@@ -1,10 +1,10 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-#include <string>
+// #include <string>
 #include <sstream> /* istringstream */
-#include <iostream> /* cout's */
-#include <cstring> /* strerro() */
+// #include <iostream> /* cout's */
+#include <cstdio> /* sscanf() */
 
 // cross platform?
 #if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
@@ -23,7 +23,7 @@
 
 #endif
 
-#include <unistd.h> /* sscanf(), close() */
+#include <unistd.h> /* close() */
 
 /**
     ARP header:
@@ -45,8 +45,9 @@
     but i changed it to 0080 for ip
     because of wireshark view.
     need to test, maybe 0806 will work too
+    TESTED
  */
-#define ETHER_TYPE_FOR_ARP 0x0800
+#define ETHER_TYPE_FOR_ARP 0x0806
 struct ARPPacket{
     ARPPacket() = default;
     unsigned short int hardware = htons(HW_TYPE_FOR_ETHER);
@@ -66,7 +67,8 @@ struct ARPPacket{
     Ethernet frame:
         destination MAC 6 bytes
         source MAC 6 bytes
-
+        type 2 bytes
+        
         everything
 **/
 class EthernetPacket{
@@ -79,17 +81,17 @@ public:
     ARPPacket arp;
 
 
-    void setSMAC(const char * sourcemac);
-    void setTMAC(const char * targetmac);
+    int setSMAC(const char * sourcemac);
+    int setTMAC(const char * targetmac);
 
-    void setSIP(const char * srcIP);
-    void setTIP(const char * trgIP);
-
+    int setSIP(const char * srcIP);
+    int setTIP(const char * trgIP);
+    std::ostream& writeTo(std::ostream& os) const;
+private:
     unsigned char * parseIP(const char * str);
     unsigned char * parseMAC(const char * str);
-    void copyArray(const char * from, unsigned char * to, int len);
+    size_t copyArray(const char * from, unsigned char * to, int len);
 
-    std::ostream& writeTo(std::ostream& os) const;
 };
 
 int sendPacket(const EthernetPacket * eth, const char * intrfc);
@@ -98,4 +100,8 @@ inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
     return eth.writeTo(os);
 }
 
+/* C-interface */
+extern "C"{
+
+}
 #endif

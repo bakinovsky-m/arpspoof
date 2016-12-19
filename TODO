@@ -1,9 +1,11 @@
+c++ instead of c (strings as methods args)
+
+c interface(mmmmmm)
+
 crossplatform testing!!!
 now it compiles in toolchain mode
 but doesn't compiles on xp machine (can't find netioapi.h)
 if compiled in toolchain mode, it doesn't execute on xp machine, says smthng about if_nametoindex()
 so a hate windows. or crossplatform coding.
 
-output - macs to hex view
-
-need to make parse fucntions similar
+need to make parse methods similar
