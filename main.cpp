@@ -17,21 +17,17 @@ int main(int argc, char* argv[])
         eth.setSMAC(argv[3]);
         eth.setTMAC(argv[4]);
     } else {
-        char srcMAC[] = {1,2,3,4,5,6,7};
-        char trgMAC[] = {0xff,0xff,0xff,0xff,0xff,0xff};
-        char srcIP[] = {192, 168, 1, 2};
-        char trgIP[] = {192, 168, 1, 1};
-        eth.setSIP(srcIP);
-        eth.setTIP(trgIP);
-        eth.setSMAC(srcMAC);
-        eth.setTMAC(trgMAC);
+        eth.setSIP("192.168.1.1");
+        eth.setTIP("192.168.1.1");
+        eth.setSMAC("1:2:3:4:5:6");
+        eth.setTMAC("0xff:0xff:0xff:0xff:0xff:0xff");
     }
     std::cout << eth << std::endl;
 
     EthernetPacket * e = &eth;
     while(1){
         if(argc != 6){
-            char * ifname = "lo\0";
+            std::string ifname = "lo\0";
             sendPacket(e, ifname);
         } else {
             sendPacket(e, argv[5]);

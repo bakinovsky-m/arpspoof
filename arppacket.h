@@ -1,7 +1,7 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-// #include <string>
+#include <string>
 #include <sstream> /* istringstream */
 // #include <iostream> /* cout's */
 #include <cstdio> /* sscanf() */
@@ -81,27 +81,23 @@ public:
     ARPPacket arp;
 
 
-    int setSMAC(const char * sourcemac);
-    int setTMAC(const char * targetmac);
+    int setSMAC(const std::string sourcemac);
+    int setTMAC(const std::string targetmac);
 
-    int setSIP(const char * srcIP);
-    int setTIP(const char * trgIP);
+    int setSIP(const std::string srcIP);
+    int setTIP(const std::string trgIP);
     std::ostream& writeTo(std::ostream& os) const;
 private:
-    unsigned char * parseIP(const char * str);
-    unsigned char * parseMAC(const char * str);
-    size_t copyArray(const char * from, unsigned char * to, int len);
+    unsigned char * parseIP(const std::string str);
+    unsigned char * parseMAC(const std::string str);
+    size_t copyArray(const std::string from, unsigned char * to, int len);
 
 };
 
-int sendPacket(const EthernetPacket * eth, const char * intrfc);
+int sendPacket(const EthernetPacket * eth, const std::string intrfc);
 
 inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
     return eth.writeTo(os);
 }
 
-/* C-interface */
-extern "C"{
-
-}
 #endif
