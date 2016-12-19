@@ -153,6 +153,14 @@ int sendPacket(const EthernetPacket * eth, const std::string intrfc){
     return 0;
 }
 
-int cSendPacket(){
-    return 0;
+int cSendPacket(const EthPacket* eth, char* ifname){
+    EthernetPacket ethpack = epStructToEpClass(eth);
+    int res = sendPacket(&ethpack, std::string(ifname));
+    return res;
+}
+
+EthernetPacket epStructToEpClass(const EthPacket* ep){
+    EthernetPacket eth = EthernetPacket();
+    std::memcpy(&eth, ep, sizeof(eth));
+    return eth;
 }

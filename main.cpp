@@ -4,7 +4,6 @@
 
 int main(int argc, char* argv[])
 {
-    std::cout << cSendPacket() << std::endl;
     if(argc == 1){
         std::cout << "Help: ./arpspoof sourceMAC targetMAC sourceIP targetIP interface" << std::endl;
         return 0;

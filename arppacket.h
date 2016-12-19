@@ -5,6 +5,7 @@
 #include <sstream> /* istringstream */
 // #include <iostream> /* cout's */
 #include <cstdio> /* sscanf() */
+#include <cstring>
 
 // cross platform?
 #if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
@@ -112,12 +113,22 @@ inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
     return eth.writeTo(os);
 }
 
+
 #ifdef __cplusplus
 extern "C"{
 #endif
-LIB_EXPORT int LIB_CALL cSendPacket();
+    struct EthPacket{
+        EthPacket() = default;
+        unsigned char targetMAC[6]{0};
+        unsigned char sourceMAC[6]{0};
+        unsigned char type[2] = {0x08, 0x06};
+        ARPPacket arp;
+    };
+    LIB_EXPORT int LIB_CALL cSendPacket(const EthPacket*, char*);
 #ifdef __cplusplus
 }
 #endif
+
+EthernetPacket epStructToEpClass(const EthPacket*);
 
 #endif
