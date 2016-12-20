@@ -9,3 +9,9 @@ if compiled in toolchain mode, it doesn't execute on xp machine, says smthng abo
 so a hate windows. or crossplatform coding.
 
 need to make parse methods similar
+
+struct - no constuctors
+struct -> class
+c - no inititalization (macros?)
+
+.h and .hpp

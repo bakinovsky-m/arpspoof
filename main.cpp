@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unistd.h> /* usleep() */
-#include "arppacket.h"
+#include "arppacket.hpp"
 
 int main(int argc, char* argv[])
 {

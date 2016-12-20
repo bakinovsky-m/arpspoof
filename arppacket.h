@@ -5,7 +5,7 @@
 #include <sstream> /* istringstream */
 // #include <iostream> /* cout's */
 #include <cstdio> /* sscanf() */
-#include <cstring>
+// #include <cstring>
 
 // cross platform?
 #if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
@@ -63,17 +63,17 @@
 #define ETHER_TYPE_FOR_ARP 0x0806
 struct ARPPacket{
     ARPPacket() = default;
-    unsigned short int hardware = htons(HW_TYPE_FOR_ETHER);
-    unsigned short int protocol = htons(ETHER_TYPE_FOR_ARP);
-    unsigned char hardwareLength = 6;
-    unsigned char protocolLength = 4;
+    uint16_t hardware = htons(HW_TYPE_FOR_ETHER);
+    uint16_t protocol = htons(ETHER_TYPE_FOR_ARP);
+    uint8_t hardwareLength = 6;
+    uint8_t protocolLength = 4;
 
-    unsigned short int operationCode = htons(2); //response
+    uint16_t operationCode = htons(2); //response
 
-    unsigned char sourceHardwareAddress[6]{0};
-    unsigned char sourceProtocolAddress[4]{0};
-    unsigned char targetHardwareAddress[6]{0};
-    unsigned char targetProtocolAddress[4]{0};
+    uint8_t sourceHardwareAddress[6]{0};
+    uint8_t sourceProtocolAddress[4]{0};
+    uint8_t targetHardwareAddress[6]{0};
+    uint8_t targetProtocolAddress[4]{0};
 };
 
 /**
@@ -84,14 +84,23 @@ struct ARPPacket{
         
         everything
 **/
-class EthernetPacket{
-public:
-    EthernetPacket() = default;
 
-    unsigned char targetMAC[6]{0};
-    unsigned char sourceMAC[6]{0};
-    unsigned char type[2] = {0x08, 0x06};
+struct EthPacket{
+    unsigned char targetMAC[6];
+    unsigned char sourceMAC[6];
+    unsigned char type[2];
     ARPPacket arp;
+};
+
+class EthernetPacket : public EthPacket{
+public:
+    // EthernetPacket() = default;
+    EthernetPacket();
+
+    // uint8_t targetMAC[6]{0};
+    // uint8_t sourceMAC[6]{0};
+    // uint8_t type[2] = {0x08, 0x06};
+    // ARPPacket arp;
 
 
     int setSMAC(const std::string sourcemac);
@@ -101,9 +110,9 @@ public:
     int setTIP(const std::string trgIP);
     std::ostream& writeTo(std::ostream& os) const;
 private:
-    unsigned char * parseIP(const std::string str);
-    unsigned char * parseMAC(const std::string str);
-    size_t copyArray(const std::string from, unsigned char * to, int len);
+    uint8_t * parseIP(const std::string str);
+    uint8_t * parseMAC(const std::string str);
+    size_t copyArray(const std::string from, uint8_t * to, int len);
 
 };
 
@@ -113,22 +122,13 @@ inline std::ostream& operator<<(std::ostream& os, const EthernetPacket eth){
     return eth.writeTo(os);
 }
 
-
 #ifdef __cplusplus
 extern "C"{
 #endif
-    struct EthPacket{
-        EthPacket() = default;
-        unsigned char targetMAC[6]{0};
-        unsigned char sourceMAC[6]{0};
-        unsigned char type[2] = {0x08, 0x06};
-        ARPPacket arp;
-    };
+    
     LIB_EXPORT int LIB_CALL cSendPacket(const EthPacket*, char*);
 #ifdef __cplusplus
 }
 #endif
-
-EthernetPacket epStructToEpClass(const EthPacket*);
 
 #endif

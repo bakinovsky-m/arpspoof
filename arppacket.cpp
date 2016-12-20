@@ -1,5 +1,28 @@
 #include "arppacket.h"
 
+EthernetPacket::EthernetPacket(){
+    for(std::ptrdiff_t i = 0; i < 6; i += 1){
+        targetMAC[i] = 0;
+        sourceMAC[i] = 0;
+    }
+
+    arp.hardware = htons(HW_TYPE_FOR_ETHER);
+    arp.protocol = htons(ETHER_TYPE_FOR_ARP);
+    arp.hardwareLength = 6;
+    arp.protocolLength = 4;
+    arp.operationCode = htons(2);
+
+    for(std::ptrdiff_t i = 0; i < 6; i += 1){
+        arp.sourceHardwareAddress[i] = 0;
+        arp.targetHardwareAddress[i] = 0;
+    }
+    
+    for(std::ptrdiff_t i = 0; i < 4; i += 1){
+        arp.targetProtocolAddress[i] = 0;
+        arp.sourceProtocolAddress[i] = 0;
+    }
+}
+
 int  EthernetPacket::setSMAC(const std::string srcMAC){
     size_t res1 = copyArray(srcMAC, arp.sourceHardwareAddress, arp.hardwareLength);
     size_t res2 = copyArray(srcMAC, sourceMAC, arp.hardwareLength);
@@ -144,7 +167,10 @@ int sendPacket(const EthernetPacket * eth, const std::string intrfc){
         in manual it needs void*, but no errors appears at compiling
         magic
     */
-    int ss = sendto(s, (char*)eth, sizeof(*eth), 0, (sockaddr*)&socket_address, sizeof(socket_address));
+    // int ss = sendto(s, (char*)eth, sizeof(*eth), 0, (sockaddr*)&socket_address, sizeof(socket_address));
+    /* reinterpret_cast can't cast away cv-qualifiers */
+    EthernetPacket localEth = *eth;
+    int ss = sendto(s, reinterpret_cast<char*>(&localEth), sizeof(*eth), 0, reinterpret_cast<sockaddr*>(&socket_address), sizeof(socket_address));
     if(ss < 0){
         throw "no data sent";
         return -1;
@@ -153,14 +179,9 @@ int sendPacket(const EthernetPacket * eth, const std::string intrfc){
     return 0;
 }
 
-int cSendPacket(const EthPacket* eth, char* ifname){
-    EthernetPacket ethpack = epStructToEpClass(eth);
-    int res = sendPacket(&ethpack, std::string(ifname));
+int cSendPacket(const EthPacket* ethpack, char* ifname){
+    // EthernetPacket ethpack = epStructToEpClass(eth);
+    EthPacket localEthPack = *ethpack;
+    int res = sendPacket(reinterpret_cast<EthernetPacket*>(&localEthPack), std::string(ifname));
     return res;
-}
-
-EthernetPacket epStructToEpClass(const EthPacket* ep){
-    EthernetPacket eth = EthernetPacket();
-    std::memcpy(&eth, ep, sizeof(eth));
-    return eth;
 }
