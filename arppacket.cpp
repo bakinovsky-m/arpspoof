@@ -1,4 +1,4 @@
-#include "arppacket.h"
+#include "arppacket.hpp"
 
 EthernetPacket::EthernetPacket(){
     for(std::ptrdiff_t i = 0; i < 6; i += 1){
@@ -23,7 +23,14 @@ EthernetPacket::EthernetPacket(){
     }
 }
 
-int  EthernetPacket::setSMAC(const std::string srcMAC){
+EthernetPacket::EthernetPacket(const std::string& sourceMAC, const std::string& targetMAC, const std::string& srcIP, const std::string& trgIP){
+    setSMAC(sourceMAC);
+    setTMAC(targetMAC);
+    setSIP(srcIP);
+    setTIP(trgIP);
+}
+
+int  EthernetPacket::setSMAC(const std::string& srcMAC){
     size_t res1 = copyArray(srcMAC, arp.sourceHardwareAddress, arp.hardwareLength);
     size_t res2 = copyArray(srcMAC, sourceMAC, arp.hardwareLength);
     if(res1 != arp.hardwareLength || res2 != arp.hardwareLength){
@@ -32,7 +39,7 @@ int  EthernetPacket::setSMAC(const std::string srcMAC){
     return 0;
 }
 
-int EthernetPacket::setTMAC(const std::string trgMAC){
+int EthernetPacket::setTMAC(const std::string& trgMAC){
     size_t res1 = copyArray(trgMAC, arp.targetHardwareAddress, arp.hardwareLength);
     size_t res2 = copyArray(trgMAC, targetMAC, arp.hardwareLength);
     if(res1 != arp.hardwareLength || res2 != arp.hardwareLength){
@@ -41,7 +48,7 @@ int EthernetPacket::setTMAC(const std::string trgMAC){
     return 0;
 }
 
-int EthernetPacket::setSIP(const std::string srcIP){
+int EthernetPacket::setSIP(const std::string& srcIP){
     size_t res = copyArray(srcIP, arp.sourceProtocolAddress, arp.protocolLength);
     if (res != arp.protocolLength){
         return -1;
@@ -49,7 +56,7 @@ int EthernetPacket::setSIP(const std::string srcIP){
     return 0;
 }
 
-int EthernetPacket::setTIP(const std::string trgIP){
+int EthernetPacket::setTIP(const std::string& trgIP){
     size_t res = copyArray(trgIP, arp.targetProtocolAddress, arp.protocolLength);
     if (res != arp.protocolLength){
         return -1;
@@ -60,7 +67,7 @@ int EthernetPacket::setTIP(const std::string trgIP){
 /* 
     return: count of copied bytes or -1 in case of wrong length
 */
-size_t EthernetPacket::copyArray(const std::string from, unsigned char * to, int len){
+size_t EthernetPacket::copyArray(const std::string& from, unsigned char * to, int len){
     unsigned char * fr = nullptr;
     if(len == arp.protocolLength){
         fr = parseIP(from);
@@ -80,7 +87,7 @@ size_t EthernetPacket::copyArray(const std::string from, unsigned char * to, int
     return it;
 }
 
-unsigned char * EthernetPacket::parseIP(const std::string str){
+unsigned char * EthernetPacket::parseIP(const std::string& str){
     int b[4]{0};
     char dot;
     unsigned char * res = new unsigned char[4]{0};
@@ -93,7 +100,7 @@ unsigned char * EthernetPacket::parseIP(const std::string str){
     return res;
 }
 
-unsigned char * EthernetPacket::parseMAC(const std::string str){
+unsigned char * EthernetPacket::parseMAC(const std::string& str){
     int b[6]{0};
     char dot;
     unsigned char * res = new unsigned char[6]{0};
@@ -107,7 +114,7 @@ unsigned char * EthernetPacket::parseMAC(const std::string str){
 }
 
 std::ostream& EthernetPacket::writeTo(std::ostream& os) const {
-    std::string str = "";
+    // std::string str = "";
 
     os << "source mac: ";
     for (std::ptrdiff_t i = 0 ; i < arp.hardwareLength; i++){
@@ -141,7 +148,7 @@ std::ostream& EthernetPacket::writeTo(std::ostream& os) const {
 }
 
 /* must be root */
-int sendPacket(const EthernetPacket * eth, const std::string intrfc){
+int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
     int s = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
     if(s < 0){
         throw "bad file descriptor";
