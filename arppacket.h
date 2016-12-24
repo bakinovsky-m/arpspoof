@@ -14,6 +14,12 @@
 #include <ws2tcpip.h>
 #include "custom_for_win.h" /* my custom header with some definitions */
 
+#include <stdint.h>
+ 
+typedef uint8_t u_int8_t;
+typedef uint16_t u_int16_t;
+typedef uint32_t u_int32_t;
+
 #else
 
 #include <sys/socket.h> /* nothing needs this header */
