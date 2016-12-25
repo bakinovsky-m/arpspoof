@@ -9,23 +9,18 @@ int main(int argc, char* argv[])
     //     return 0;
     // }
 
-    EthernetPacket eth = EthernetPacket("192.168.1.1", "192.168.1.2", "00:00:00:00:00:00", "00:00:00:00:00:00");
+    EthernetPacket eth = EthernetPacket("192.168.1.1", "192.168.1.2", "12:23:34:45:56:67", "21:32:43:54:65:76");
     std::cout << eth << std::endl;
 
-    EthernetPacket * e = &eth;
     while(1){
         if(argc != 6){
-            std::string ifname = "lo\0";
-            sendPacket(e, ifname);
+            sendPacket(&eth, "lo");
         } else {
-            sendPacket(e, argv[5]);
+            sendPacket(&eth, argv[5]);
         }
         // std::cout << "reply sent" << std::endl;
         usleep(5*1000000);
     }
-
-    delete e;
-
 
     return 0;
 }

@@ -1,10 +1,14 @@
 #include "arppacket.hpp"
 
-EthernetPacket::EthernetPacket(){
+void EthernetPacket::init(){
+
     for(std::ptrdiff_t i = 0; i < 6; i += 1){
         targetMAC[i] = 0;
         sourceMAC[i] = 0;
     }
+
+    type[0] = 0x08;
+    type[1] = 0x06;
 
     arp.hardware = htons(HW_TYPE_FOR_ETHER);
     arp.protocol = htons(ETHER_TYPE_FOR_ARP);
@@ -23,7 +27,12 @@ EthernetPacket::EthernetPacket(){
     }
 }
 
+EthernetPacket::EthernetPacket(){
+    init();
+}
+
 EthernetPacket::EthernetPacket(const std::string& sourceMAC, const std::string& targetMAC, const std::string& srcIP, const std::string& trgIP){
+    init();
     setSMAC(sourceMAC);
     setTMAC(targetMAC);
     setSIP(srcIP);

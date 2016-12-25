@@ -14,7 +14,10 @@ public:
         const std::string& srcIP, const std::string& trgIP);
 
     std::ostream& writeTo(std::ostream& os) const;
+
+
 private:
+    void init();
     int setSMAC(const std::string& sourcemac);
     int setTMAC(const std::string& targetmac);
 

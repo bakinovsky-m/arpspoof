@@ -84,9 +84,9 @@ struct ARPPacket{
 **/
 
 struct EthPacket{
-    unsigned char targetMAC[6];
-    unsigned char sourceMAC[6];
-    unsigned char type[2];
+    uint8_t targetMAC[6];
+    uint8_t sourceMAC[6];
+    uint8_t type[2];
     struct ARPPacket arp;
 };
 
