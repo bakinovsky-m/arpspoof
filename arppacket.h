@@ -8,7 +8,7 @@
 // // #include <cstring>
 
 // cross platform?
-#if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
+#if defined _WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -27,10 +27,10 @@ typedef uint32_t u_int32_t;
 #include <linux/if_ether.h> /* ETH_P_ARP, ETH_ALEN */
 #include <arpa/inet.h> /* htons() */
 #include <net/if.h> /* if_nametoindex() */
+#include <unistd.h> /* close() */
 
 #endif
 
-#include <unistd.h> /* close() */
 
 #ifdef _WINDOWS
 #define LIB_CALL __cdecl
