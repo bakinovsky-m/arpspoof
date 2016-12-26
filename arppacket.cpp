@@ -191,7 +191,11 @@ int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
         throw "no data sent";
         return -1;
     }
+    #if defined _WIN32
+    closesocket(s);
+    #else
     close(s);
+    #endif
     return 0;
 }
 
