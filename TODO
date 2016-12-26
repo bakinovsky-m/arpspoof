@@ -1,17 +1,5 @@
-c++ instead of c (strings as methods args)
-
-c interface(mmmmmm)
-
 crossplatform testing!!!
 now it compiles in toolchain mode
 but doesn't compiles on xp machine (can't find netioapi.h)
 if compiled in toolchain mode, it doesn't execute on xp machine, says smthng about if_nametoindex()
 so a hate windows. or crossplatform coding.
-
-need to make parse methods similar
-
-struct - no constuctors
-struct -> class
-c - no inititalization (macros?)
-
-.h and .hpp

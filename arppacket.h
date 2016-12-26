@@ -1,12 +1,6 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-// #include <string>
-// #include <sstream> /* istringstream */
-// // #include <iostream> /* cout's */
-// #include <cstdio> /* sscanf() */
-// // #include <cstring>
-
 // cross platform?
 #if defined __WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
 
