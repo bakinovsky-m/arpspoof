@@ -1,12 +1,6 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-// #include <string>
-// #include <sstream> /* istringstream */
-// // #include <iostream> /* cout's */
-// #include <cstdio> /* sscanf() */
-// // #include <cstring>
-
 // cross platform?
 #if defined _WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
 
@@ -32,13 +26,13 @@ typedef uint32_t u_int32_t;
 #endif
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define LIB_CALL __cdecl
 #else
 #define LIB_CALL
 #endif
 
-#ifdef MY_DLL__EXPORTS
+#ifdef DLL_EXPORTS
 #define LIB_EXPORT __declspec(dllexport)
 #else
 #define LIB_EXPORT
