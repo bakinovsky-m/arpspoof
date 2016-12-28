@@ -181,7 +181,6 @@ int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
         in manual it needs void*, but no errors appears at compiling
         magic
     */
-    // int ss = sendto(s, (char*)eth, sizeof(*eth), 0, (sockaddr*)&socket_address, sizeof(socket_address));
     /* reinterpret_cast can't cast away cv-qualifiers */
     EthernetPacket localEth = *eth;
     int ss = sendto(s, reinterpret_cast<char*>(&localEth), sizeof(*eth), 0, reinterpret_cast<sockaddr*>(&socket_address), sizeof(socket_address));
@@ -198,8 +197,6 @@ int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
 }
 
 int cSendPacket(const EthPacket* ethpack, char* ifname){
-    // EthernetPacket ethpack = epStructToEpClass(eth);
     EthPacket localEthPack = *ethpack;
-    int res = sendPacket(reinterpret_cast<EthernetPacket*>(&localEthPack), std::string(ifname));
-    return res;
+    return sendPacket(reinterpret_cast<EthernetPacket*>(&localEthPack), std::string(ifname));
 }
