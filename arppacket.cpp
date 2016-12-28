@@ -123,8 +123,6 @@ unsigned char * EthernetPacket::parseMAC(const std::string& str){
 }
 
 std::ostream& EthernetPacket::writeTo(std::ostream& os) const {
-    // std::string str = "";
-
     os << "source mac: ";
     for (std::ptrdiff_t i = 0 ; i < arp.hardwareLength; i++){
         os << std::hex << static_cast<int>(sourceMAC[i]);

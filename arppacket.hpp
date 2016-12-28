@@ -3,7 +3,6 @@
 
 #include "arppacket.h"
 
-#include <string>
 #include <sstream>
 #include <cstdio>
 
