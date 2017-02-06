@@ -174,13 +174,6 @@ int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
         socket_address.sll_addr[i] = eth->arp.targetHardwareAddress[i];
     }
 
-
-    /*  
-        second arg of sendto casts to char* because of windows needs
-        linux don't give a fuck, as i see
-        in manual it needs void*, but no errors appears at compiling
-        magic
-    */
     /* reinterpret_cast can't cast away cv-qualifiers */
     EthernetPacket localEth = *eth;
     int ss = sendto(s, reinterpret_cast<char*>(&localEth), sizeof(*eth), 0, reinterpret_cast<sockaddr*>(&socket_address), sizeof(socket_address));
@@ -188,11 +181,13 @@ int sendPacket(const EthernetPacket * eth, const std::string& intrfc){
         throw "no data sent";
         return -1;
     }
-    #if defined _WIN32
+
+#if defined _WIN32
     closesocket(s);
-    #else
+#else
     close(s);
-    #endif
+#endif
+    
     return 0;
 }
 

@@ -1,7 +1,6 @@
 #ifndef HG_ETHPACKET_H
 #define HG_ETHPACKET_H
 
-// cross platform?
 #if defined _WIN32 || defined __WIN64 || defined __MINGW32__ || defined __MINGW64__ || defined __CYGWIN__ || defined __WINDOWS__
 
 #include <winsock2.h>
